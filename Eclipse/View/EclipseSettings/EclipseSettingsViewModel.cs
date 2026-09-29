@@ -139,15 +139,14 @@ namespace Eclipse.View.EclipseSettings
 
         private void InitializeListTypes()
         {
-            string[] listTypes = Enum.GetNames(typeof(ListCategoryType));
-
-            IEnumerable<object> listOfTypes = from listType in listTypes
-                                              where listType != ListCategoryType.VoiceSearch.ToString()
-                                              && listType != ListCategoryType.RandomGame.ToString()
-                                              && listType != ListCategoryType.MoreLikeThis.ToString()
-                                              select Enum.Parse(typeof(ListCategoryType), listType);
-
-            DefaultListTypes = listOfTypes;
+            // Use strongly-typed ListCategoryType values so the ComboBox SelectedItem
+            // (bound to a ListCategoryType property) round-trips correctly. Previously
+            // these were boxed as object via Enum.Parse, which prevented the two-way
+            // binding from matching/writing the selected value back to the setting.
+            DefaultListTypes = Enum.GetValues(typeof(ListCategoryType))
+                .Cast<ListCategoryType>()
+                .Where(listType => listType.IsValidForCustomList())
+                .ToList();
         }
 
         private void InitializeTabPages()
@@ -548,8 +547,8 @@ namespace Eclipse.View.EclipseSettings
             MarginSample = new Thickness(BoxFrontMarginLeft, BoxFrontMarginTop, BoxFrontMarginRight, BoxFrontMarginBottom);
         }
 
-        private IEnumerable<object> defaultListTypes;
-        public IEnumerable<object> DefaultListTypes
+        private IEnumerable<ListCategoryType> defaultListTypes;
+        public IEnumerable<ListCategoryType> DefaultListTypes
         {
             get { return defaultListTypes; }
             set

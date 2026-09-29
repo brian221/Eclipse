@@ -32,6 +32,16 @@ namespace Eclipse.State
             attractModeService.RestartAttractMode();
 
             Option<ListCategoryType> option = eclipseStateContext.MainWindowViewModel.OptionList.SelectedOption;
+
+            // Auto-remember the chosen browsable category as the startup default view so the
+            // next launch opens where the user was last browsing. VoiceSearch and RandomGame
+            // are transient actions, not views, so they are not remembered.
+            if (option.EnumOption != ListCategoryType.VoiceSearch
+                && option.EnumOption != ListCategoryType.RandomGame)
+            {
+                eclipseStateContext.MainWindowViewModel.RememberDefaultListCategoryType(option.EnumOption);
+            }
+
             switch (option.EnumOption)
             {
                 case ListCategoryType.VoiceSearch:

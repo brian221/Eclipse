@@ -60,14 +60,5 @@ namespace Eclipse.Properties {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap EclipseSettingsIcon1 {
-            get {
-                object obj = ResourceManager.GetObject("EclipseSettingsIcon1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }
