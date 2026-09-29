@@ -869,19 +869,68 @@ namespace Eclipse.View
             return EclipseStateContext.OnPageDown();
         }
 
+        /// <summary>
+        /// Remembers the given category as the startup default view. Persists the value
+        /// (off the UI thread) and updates the cached settings so the next launch opens
+        /// on the category the user was last browsing. Failures are logged and ignored so
+        /// they never interrupt navigation.
+        /// </summary>
+        public void RememberDefaultListCategoryType(ListCategoryType listCategoryType)
+        {
+            try
+            {
+                Eclipse.Models.EclipseSettings eclipseSettings = EclipseSettingsDataProvider.Instance.EclipseSettings;
+                if (eclipseSettings == null || eclipseSettings.DefaultListCategoryType == listCategoryType)
+                {
+                    // no change needed
+                    return;
+                }
+
+                eclipseSettings.DefaultListCategoryType = listCategoryType;
+
+                // persist without blocking the UI thread
+                _ = EclipseSettingsDataProvider.Instance.SaveEclipseSettingsAsync(eclipseSettings);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException(ex, "RememberDefaultListCategoryType");
+            }
+        }
+
         public void ResetGameLists(ListCategoryType listCategoryType)
         {
-            // get the game list from the GameListSet for the given listCategoryType
-            IEnumerable<GameListSet> query = from gameListSet in GameListSets
-                                             where gameListSet.ListCategoryType == listCategoryType
-                                             select gameListSet;
+            // Resolve the set for the requested category, falling back to Platform
+            // when it is missing or empty, so startup honors the saved default view
+            // for any category and never lands on an empty view.
+            CurrentGameListSet = ResolveGameListSet(listCategoryType);
 
-            CurrentGameListSet = query?.FirstOrDefault();
-            if (CurrentGameListSet != null)
+            if (CurrentGameListSet != null && CurrentGameListSet.GameLists?.Count > 0)
             {
                 listCycle = new ListCycle<GameList>(CurrentGameListSet.GameLists, 2);
                 RefreshGameLists();
             }
+        }
+
+        /// <summary>
+        /// Returns the <see cref="GameListSet"/> for the requested category when it exists
+        /// and has content; otherwise returns the Platform (fallback) set that has content.
+        /// Returns null only when neither the requested category nor Platform has any lists.
+        /// This is a pure function over <see cref="GameListSets"/> with no side effects.
+        /// </summary>
+        public GameListSet ResolveGameListSet(ListCategoryType listCategoryType)
+        {
+            GameListSet requested = GameListSets?
+                .FirstOrDefault(set => set.ListCategoryType == listCategoryType
+                                    && set.GameLists?.Count > 0);
+            if (requested != null)
+            {
+                return requested;
+            }
+
+            // Fallback category: Platform
+            return GameListSets?
+                .FirstOrDefault(set => set.ListCategoryType == ListCategoryType.Platform
+                                    && set.GameLists?.Count > 0);
         }
 
         private static readonly Random random = new Random();
