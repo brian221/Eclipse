@@ -793,6 +793,9 @@ namespace Eclipse.View
         public void CallGameChangeFunction()
         {
             GameChangeFunction?.Invoke();
+
+            // Re-evaluate High Scores option visibility for the newly selected game.
+            PropertyChanged(this, new PropertyChangedEventArgs("IsHighScoresOptionVisible"));
         }
 
         public void CallStopVideoAndAnimationsFunction()
@@ -1015,6 +1018,41 @@ namespace Eclipse.View
                 // save state so we can get back to the current game
                 SaveStateForGameListChange();
             }
+        }
+
+        // True when the setting is enabled AND high scores are available for the current game.
+        // Drives both XAML visibility and state-machine navigation.
+        public bool IsHighScoresOptionVisible
+        {
+            get => EclipseSettingsDataProvider.Instance.EclipseSettings.ShowHighScores
+                   && HighScoresService.Instance.IsHighScoresAvailable(CurrentGameList?.Game1?.Game);
+        }
+
+        // Opens the standard BigBox high scores view for the current game and routes failures
+        // to the error state.
+        public void OpenHighScoresForCurrentGame()
+        {
+            try
+            {
+                bool opened = HighScoresService.Instance.OpenHighScores();
+                if (!opened)
+                {
+                    LogHelper.LogException(null, "OpenHighScoresForCurrentGame");
+                    ShowHighScoresError();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException(ex, "OpenHighScoresForCurrentGame");
+                ShowHighScoresError();
+            }
+        }
+
+        private void ShowHighScoresError()
+        {
+            DisplayingErrorState displayingErrorState = EclipseStateContext.GetState(typeof(DisplayingErrorState)) as DisplayingErrorState;
+            displayingErrorState.ErrorMessage = "The high scores view could not be opened for this game.";
+            EclipseStateContext.TransitionToState(displayingErrorState);
         }
 
         // variables to track what list set, list, and game we were on when a game is favorited

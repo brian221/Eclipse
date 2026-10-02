@@ -542,6 +542,16 @@ namespace Eclipse.View.EclipseSettings
             }
         }
 
+        public bool ShowHighScores
+        {
+            get => eclipseSettings.ShowHighScores;
+            set
+            {
+                eclipseSettings.ShowHighScores = value;
+                OnPropertyChanged("ShowHighScores");
+            }
+        }
+
         private void updateMarginSample()
         {
             MarginSample = new Thickness(BoxFrontMarginLeft, BoxFrontMarginTop, BoxFrontMarginRight, BoxFrontMarginBottom);
@@ -821,6 +831,7 @@ namespace Eclipse.View.EclipseSettings
 
             DisplayFeaturedGame = eclipseSettings.DisplayFeaturedGame;
             DisplayOptionsOnEscape = eclipseSettings.DisplayOptionsOnEscape;
+            ShowHighScores = eclipseSettings.ShowHighScores;
         }
 
         private void InvalidateCommands()

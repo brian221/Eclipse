@@ -1,15 +1,15 @@
-﻿using Eclipse.Models;
+using Eclipse.Models;
 using Eclipse.Service;
 using Eclipse.State.KeyStrategy;
 using System;
 
 namespace Eclipse.State
 {
-    public class GameDetailOptionFavoriteState : EclipseState
+    public class GameDetailOptionHighScoresState : EclipseState
     {
         private readonly AttractModeService attractModeService;
 
-        public GameDetailOptionFavoriteState()
+        public GameDetailOptionHighScoresState()
         {
             attractModeService = AttractModeService.Instance;
         }
@@ -19,20 +19,20 @@ namespace Eclipse.State
             attractModeService.RestartAttractMode();
             eclipseStateContext.MainWindowViewModel.IsDisplayingFeature = true;
             eclipseStateContext.MainWindowViewModel.IsDisplayingMoreInfo = true;
-            eclipseStateContext.MainWindowViewModel.GameDetailOption = GameDetailOption.Favorite;
+            eclipseStateContext.MainWindowViewModel.GameDetailOption = GameDetailOption.HighScores;
         }
 
         public bool OnDown(EclipseStateContext eclipseStateContext, bool held)
         {
             attractModeService.RestartAttractMode();
-            eclipseStateContext.TransitionToState(eclipseStateContext.GetState(typeof(GameDetailOptionMoreState)));
+            eclipseStateContext.TransitionToState(eclipseStateContext.GetState(typeof(GameDetailOptionFavoriteState)));
             return true;
         }
 
         public bool OnEnter(EclipseStateContext eclipseStateContext)
         {
             attractModeService.RestartAttractMode();
-            eclipseStateContext.MainWindowViewModel.FavoriteCurrentGame();
+            eclipseStateContext.MainWindowViewModel.OpenHighScoresForCurrentGame();
             return true;
         }
 
@@ -77,14 +77,7 @@ namespace Eclipse.State
         public bool OnUp(EclipseStateContext eclipseStateContext, bool held)
         {
             attractModeService.RestartAttractMode();
-            if (eclipseStateContext.MainWindowViewModel.IsHighScoresOptionVisible)
-            {
-                eclipseStateContext.TransitionToState(eclipseStateContext.GetState(typeof(GameDetailOptionHighScoresState)));
-            }
-            else
-            {
-                eclipseStateContext.TransitionToState(eclipseStateContext.GetState(typeof(GameDetailOptionPlayState)));
-            }
+            eclipseStateContext.TransitionToState(eclipseStateContext.GetState(typeof(GameDetailOptionPlayState)));
             return true;
         }
     }

@@ -147,6 +147,10 @@ namespace Eclipse.Models
         [DefaultValue(0)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public double SelectedGameDetailsPadding { get; set; }
+
+        [DefaultValue(false)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public bool ShowHighScores { get; set; }
     }
 
     public class CustomListDefinition

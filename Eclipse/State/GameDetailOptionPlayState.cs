@@ -25,7 +25,14 @@ namespace Eclipse.State
         public bool OnDown(EclipseStateContext eclipseStateContext, bool held)
         {
             attractModeService.RestartAttractMode();
-            eclipseStateContext.TransitionToState(new GameDetailOptionFavoriteState());
+            if (eclipseStateContext.MainWindowViewModel.IsHighScoresOptionVisible)
+            {
+                eclipseStateContext.TransitionToState(eclipseStateContext.GetState(typeof(GameDetailOptionHighScoresState)));
+            }
+            else
+            {
+                eclipseStateContext.TransitionToState(new GameDetailOptionFavoriteState());
+            }
             return true;
         }
 

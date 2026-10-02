@@ -11,6 +11,7 @@ namespace Eclipse.Models
     public enum GameDetailOption
     {
         Play,
+        HighScores,
         Favorite,
         Rating,
         MoreLikeThis

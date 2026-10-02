@@ -521,6 +521,13 @@
                           IsChecked="{Binding DisplayOptionsOnEscape, Mode=TwoWay}"
                           ToolTip="Check this box to display eclipse options when you press escape"
                           Content="Display eclipse options on escape"/>
+
+                <CheckBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="4" Margin="10,2"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          Background="#343542" Foreground="#D3D3D5"
+                          IsChecked="{Binding ShowHighScores, Mode=TwoWay}"
+                          ToolTip="Check this box to display the high scores option on the game detail view"
+                          Content="Show high scores"/>
             </Grid>
         </Grid>
 

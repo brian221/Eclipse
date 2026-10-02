@@ -414,7 +414,9 @@ namespace Eclipse.Service
                 SelectedGameDetailsPadding = 0,
 
                 DisplayFeaturedGame = false,
-                DisplayOptionsOnEscape = true
+                DisplayOptionsOnEscape = true,
+
+                ShowHighScores = false
             };
 
             return eclipseSettings;
